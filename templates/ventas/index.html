@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - My App{% endblock %}
+
+{% block content %}
+<div class="header">
+    <h1>Ventas por Año</h1>
+    <p>Gráfica que muestra el número de ventas por año.</p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div id="graph-container">
+            {{ graph_html|safe }} <!-- Aquí se inyecta la gráfica -->
+        </div>
+    </div>
+</div>
+{% endblock %}
