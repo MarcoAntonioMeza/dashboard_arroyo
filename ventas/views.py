@@ -1,3 +1,4 @@
+from datetime import date
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -17,5 +18,9 @@ def indexk(request):
 
 def index(request):
     
-    graph_html = ventas_anio_totales()
-    return render(request, 'ventas/index.html', {'graph_html': graph_html})
+    year = int(request.GET.get('year',date.today().year))
+
+    data = ventas_anio_totales(year)
+    
+    
+    return render(request, 'ventas/index.html',data)

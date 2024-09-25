@@ -1,18 +1,72 @@
 {% extends 'base.html' %}
 
-{% block title %}Home - My App{% endblock %}
+{% block title %}Dashboard - My App{% endblock %}
 
 {% block content %}
-<div class="header">
-    <h1>Ventas por Año</h1>
-    <p>Gráfica que muestra el número de ventas por año.</p>
-</div>
-
-<div class="card">
-    <div class="card-body">
-        <div id="graph-container">
-            {{ graph_html|safe }} <!-- Aquí se inyecta la gráfica -->
+<div class="row ">
+    <div class="col-md-12">
+        <div class="header mb-4 text-center">
+            <h1>Dashboard de Ventas Arroyo</h1>
+            <p>Un resumen general y detallado de las ventas por año y mes.</p>
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-chart-line"></i> Gráfica General de Ventas</h5>
+                <div id="graph-container">
+                    {{ all|safe }} <!-- Aquí se inyecta la gráfica -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-calendar-alt"></i> Ventas por Año Detalladas</h5>
+                <form method="get" action="{% url 'ventas_index' %}" class="form-inline my-3">
+                    <label for="year" class="mr-2">Selecciona el año:</label>
+                    <select name="year" id="year" class="form-control" onchange="this.form.submit()">
+                        <option value="">Seleccione</option>
+                        {% for y in years %}
+                        <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+                <div id="graph-container_">
+                    {{ by_anio.graph_html|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-chart-pie"></i> Resumen de Ventas en {{ by_anio.anio }}</h5>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>Total de Ventas:</strong> {{ by_anio.total }}
+                        <span class="text-muted">Transacciones anuales</span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Promedio de Ventas por Mes:</strong> {{ by_anio.promedio }}
+                        <span class="text-muted">Estabilidad de demanda</span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Desviación Estándar:</strong> {{ by_anio.desviacion }}
+                        <span class="text-muted">Variabilidad en ventas</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
