@@ -20,5 +20,5 @@ from ventas import urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('ventas/',include('ventas.urls'))
+    path('',include('ventas.urls'))
 ]

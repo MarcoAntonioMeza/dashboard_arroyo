@@ -20,7 +20,8 @@ def index(request):
     
     year = int(request.GET.get('year',date.today().year))
 
-    data = ventas_anio_totales(year)
+    data = vetas_totales()
+    #print(data)
     
     
     return render(request, 'ventas/index.html',data)
