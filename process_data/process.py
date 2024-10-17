@@ -17,6 +17,7 @@ import base64
 import plotly.graph_objs as go
 from plotly.offline import plot
 import random
+from .sql import *
 
 from django.db import connection
 
@@ -28,9 +29,9 @@ MESES_ES = {
 }
 
 
-def consulta_sql():
-    sql = 'SELECT FROM_UNIXTIME(created_at) as created_at, total, id FROM view_venta'
-         
+#def consulta_sql(sql = 'SELECT FROM_UNIXTIME(created_at) as created_at, total, id FROM view_venta'):
+def consulta_sql(sql = VENTAS):
+    
     with connection.cursor() as cursor:
         cursor.execute(sql)
         columnas = [col[0] for col in cursor.description]
@@ -210,7 +211,54 @@ def generate_grafica__(df):
     #return graph_html
 
 
-
+def ventas_mes_df(anio):
+    print('aniosdcsdvsdfvfsd',anio)
+    #exit()
+    df = consulta_sql()
+    
+    df['created_at'] = pd.to_datetime(df['created_at']).dt.tz_localize('UTC').dt.tz_convert('America/Mexico_City')
+    df['year'] = df['created_at'].dt.year
+    
+    df_year = df[df['year'] == anio]
+    
+    ingresos = df_year.groupby(df_year['created_at'].dt.month)['total'].sum()
+    
+    #if df_year.empty:
+    #    # Si el DataFrame está vacío, usar valores por defecto
+    #    ingresos = pd.Series([0] * 12, index=range(1, 13))
+    #else:
+    #    ingresos = df_year.groupby(df_year['created_at'].dt.month)['total'].sum()
+    
+    """
+    ================================================
+    MEDIDAS DE TENDENCIA CENTRAL DE TOTAL DE INGRESOS
+    ================================================
+    """
+    total_ingresos =f'${round(df_year["total"].sum()):,}'
+    promedio_ingresos = ingresos.mean()
+    promedio_ingresos = f'${round(promedio_ingresos):,}'
+    std_ingresos = f'${round(ingresos.std()):,}'
+    
+    
+    INGRESOS = {
+        'total': total_ingresos,
+        'promedio': promedio_ingresos,
+        'std': std_ingresos,
+        'plot': draw_plot([MESES_ES[mes] for mes in ingresos.index], ingresos.values, f'CANTIDAD DE INGRESOS EN VENTAS $ EN {anio}','MESES','INGRESOS $',True)
+    }
+    
+    return {
+        'ingresos': INGRESOS,
+        'anios':df['year'].unique(),
+        'anio_seleccionado': anio
+    }
+    
+    
+    
+    
+    
+    
+    
 
 
 def generate_grafica_anio(df, year):
@@ -330,6 +378,8 @@ def vetas_totales():
         'std': std_ingresos,
         'plot': draw_plot(ingresos.index, ingresos.values, 'CANTIDAD DE INGRESOS EN VENTAS $','AÑO','INGRESOS $',False)
     }
+    
+    
     VENTAS = {
         'total': total_ventas,
         'promedio': promedio_ventas,
@@ -342,8 +392,285 @@ def vetas_totales():
         'ventas': VENTAS
     }
 
+
+def venta_detalle_producto_():
+    TOP = 5
+    # Obtener los datos de ventas
+    df_vD = consulta_sql(VENTA_DETALLE)
+    df_vD['fecha'] = pd.to_datetime(df_vD['fecha'])  # Asegura que 'fecha' es datetime
+    df_vD['año'] = df_vD['fecha'].dt.year
+    df_vD['mes'] = df_vD['fecha'].dt.month
+
+    # Identificar los productos más vendidos
+    productos_mas_vendidos = df_vD.groupby('producto')['cantidad'].sum().sort_values(ascending=False)
+    TOP_PRODUCTO = productos_mas_vendidos.head(TOP).index.tolist()
+    df_top = df_vD[df_vD['producto'].isin(TOP_PRODUCTO)]
+
+    # Agrupar por año, mes y producto para calcular las ventas
+    ventas_por_mes_producto = df_top.groupby(['año', 'mes', 'producto'])['cantidad'].sum().unstack(fill_value=0)
+
+    # Crear la figura para el gráfico de barras apiladas
+    fig = go.Figure()
+
+    # Añadir una barra apilada para cada producto
+    for producto in TOP_PRODUCTO:
+        fig.add_trace(go.Bar(
+            x=ventas_por_mes_producto.index.get_level_values('mes'),
+            #x=[f'{año}-{mes:02d}' for año, mes in zip(ventas_por_mes_producto.index.get_level_values('año'), ventas_por_mes_producto.index.get_level_values('mes'))],
+            y= ventas_por_mes_producto[producto],
+            name=f'{producto}'
+        ))
+
+    # Configurar el layout del gráfico
+    fig.update_layout(
+        barmode='stack',
+        title=f'Top {TOP} Productos Más Vendidos',
+        xaxis=dict(
+            title='Mes',
+            tickvals=list(range(1, 13)),
+            ticktext=['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+        ),
+        yaxis=dict(
+            title='Cantidad de Ventas',
+            tickformat=','
+        ),
+        legend_title_text='Producto'
+    )
+
+    PLOT =  plot(fig, include_plotlyjs=True, output_type='div')
+    
+    return {
+        'plot': PLOT,
+        'top_productos': TOP_PRODUCTO
+    }
+
+def venta_detalle_producto__():
+    TOP = 5
+    # Obtener los datos de ventas
+    df_vD = consulta_sql(VENTA_DETALLE)
+    df_vD['fecha'] = pd.to_datetime(df_vD['fecha'])  # Asegura que 'fecha' es datetime
+    df_vD['año'] = df_vD['fecha'].dt.year
+    df_vD['mes'] = df_vD['fecha'].dt.month
+
+    # Identificar los productos más vendidos
+    productos_mas_vendidos = df_vD.groupby('producto')['cantidad'].sum().sort_values(ascending=False)
+    TOP_PRODUCTO = productos_mas_vendidos.head(TOP).index.tolist()
+    df_top = df_vD[df_vD['producto'].isin(TOP_PRODUCTO)]
+
+    # Agrupar por año, mes y producto para calcular las ventas
+    ventas_por_mes_producto = df_top.groupby(['año', 'mes', 'producto'])['cantidad'].sum().unstack(fill_value=0)
+
+    # Crear la figura para el gráfico de barras apiladas
+    fig = go.Figure()
+
+   
+   
+
+    # Añadir una barra apilada para cada producto
+    for i, producto in enumerate(TOP_PRODUCTO):
+        fig.add_trace(go.Bar(
+            x=ventas_por_mes_producto.index.get_level_values('mes'),
+            y=ventas_por_mes_producto[producto],
+            name=f'{producto}',
+            marker_color=COLORS[i % len(COLORS)]  # Asigna color de la lista COLORS
+        ))
+
+    # Configurar el layout del gráfico
+    fig.update_layout(
+        barmode='stack',
+        title=f'Top {TOP} Productos Más Vendidos',
+        xaxis=dict(
+            title='Mes',
+            tickvals=list(range(1, 13)),
+            ticktext=['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+        ),
+        yaxis=dict(
+            title='Cantidad de Ventas',
+            tickformat=','
+        ),
+        legend_title_text='Producto'
+    )
+
+    PLOT = plot(fig, include_plotlyjs=True, output_type='div')
+    
+    return {
+        'plot': PLOT,
+        'top_productos': TOP_PRODUCTO
+    }
+  
+def venta_detalle_producto____():
+    TOP = 5
+    # Obtener los datos de ventas
+    df_vD = consulta_sql(VENTA_DETALLE)
+    df_vD['fecha'] = pd.to_datetime(df_vD['fecha'])  # Asegura que 'fecha' es datetime
+    df_vD['año'] = df_vD['fecha'].dt.year
+    df_vD['mes'] = df_vD['fecha'].dt.month
+
+    # Identificar los productos más vendidos
+    productos_mas_vendidos = df_vD.groupby('producto')['cantidad'].sum().sort_values(ascending=False)
+    TOP_PRODUCTO = productos_mas_vendidos.head(TOP).index.tolist()
+    df_top = df_vD[df_vD['producto'].isin(TOP_PRODUCTO)]
+
+    # Agrupar por año, mes y producto para calcular las ventas
+    ventas_por_mes_producto = df_top.groupby(['año', 'mes', 'producto'])['cantidad'].sum().unstack(fill_value=0)
+
+    # Crear la figura para el gráfico de barras apiladas
+    fig = go.Figure()
+
+    # Definir colores para los productos
+    COLORS = ['#007bff', '#17a2b8', '#28a745', '#20c997', '#00bcd4', '#1e90ff', '#00fa9a', '#2e8b57', '#66cdaa', '#00ced1']
+
+    # Añadir una barra apilada para cada producto
+    for i, producto in enumerate(TOP_PRODUCTO):
+        fig.add_trace(go.Bar(
+            x=ventas_por_mes_producto.index.get_level_values('mes'),
+            y=ventas_por_mes_producto[producto],
+            name=f'{producto}',
+            marker_color=COLORS[i % len(COLORS)]  # Asigna color de la lista COLORS
+        ))
+
+    # Configurar el layout del gráfico con el fondo oscuro
+    fig.update_layout(
+        title=f'Top {TOP} Productos Más Vendidos',
+        xaxis_title='Mes',
+        yaxis_title='Cantidad de Ventas',
+        template='plotly_dark',
+        showlegend=True,
+        margin=dict(l=40, r=40, t=40, b=40),
+        font=dict(color='#f8f9fa'),
+        plot_bgcolor='#343a40',
+        paper_bgcolor='#343a40',
+    )
+    
+    # Configurar el eje X
+    fig.update_xaxes(
+        tickvals=list(range(1, 13)),
+        ticktext=['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        title_font=dict(color='#f8f9fa'),
+        tickfont=dict(color='#f8f9fa')
+    )
+    
+    # Configurar el eje Y
+    fig.update_yaxes(
+        title_font=dict(color='#f8f9fa'),
+        tickfont=dict(color='#f8f9fa')
+    )
+    
+    # Configurar la leyenda
+    fig.update_layout(legend=dict(font=dict(color='#f8f9fa')))
+
+    # Mostrar el gráfico
+    PLOT = plot(fig, include_plotlyjs=True, output_type='div')
+    
+    return {
+        'plot': PLOT,
+        'top_productos': TOP_PRODUCTO
+    }
+
+
+def venta_detalle_producto():
+    TOP = 5
+    # Obtener los datos de ventas
+    df_vD = consulta_sql(VENTA_DETALLE)
+    df_vD['fecha'] = pd.to_datetime(df_vD['fecha'])  # Asegura que 'fecha' es datetime
+    df_vD['año'] = df_vD['fecha'].dt.year
+    df_vD['mes'] = df_vD['fecha'].dt.month
+
+    # Identificar los productos más vendidos
+    productos_mas_vendidos = df_vD.groupby('producto')['cantidad'].sum().sort_values(ascending=False)
+    TOP_PRODUCTO = productos_mas_vendidos.head(TOP).index.tolist()
+    df_top = df_vD[df_vD['producto'].isin(TOP_PRODUCTO)]
+
+    # Agrupar por año, mes y producto para calcular las ventas
+    ventas_por_mes_producto = df_top.groupby(['año', 'mes', 'producto'])['cantidad'].sum().unstack(fill_value=0)
+
+    # Crear la figura para el gráfico de barras apiladas
+    fig = go.Figure()
+
+    # Definir colores oscuros para los productos
+    #COLORS = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b']  # Ejemplo de colores oscuros
+
+    # Añadir una barra apilada para cada producto
+    for i, producto in enumerate(TOP_PRODUCTO):
+        fig.add_trace(go.Bar(
+            x=ventas_por_mes_producto.index.get_level_values('mes'),
+            y=ventas_por_mes_producto[producto],
+            name=f'{producto}',
+            marker_color=COLORS[i % len(COLORS)]  # Asigna color de la lista COLORS
+        ))
+    
+    # Añadir una barra apilada para cada producto
+    #for producto in TOP_PRODUCTO:
+    #    for año in ventas_por_mes_producto.index.get_level_values('año').unique():
+    #        # Filtrar solo las ventas del producto y año específico
+    #        cantidad_ventas = ventas_por_mes_producto.loc[(año, slice(None)), producto]
+    #        
+    #        # Crear el texto para mostrar (mes y cantidad con el año)
+    #        texto_segmentos = [f'{mes} {año}<br>{cant:.2f}' for mes, cant in zip(ventas_por_mes_producto.index.get_level_values('mes'), cantidad_ventas)]
+    #
+    #        fig.add_trace(go.Bar(
+    #            x=ventas_por_mes_producto.index.get_level_values('mes'),
+    #            y=cantidad_ventas,
+    #            name=f'{producto} {año}',  # Incluye el año en el nombre
+    #            text=texto_segmentos,  # Asignar texto personalizado
+    #            textposition='inside'   # Posición del texto
+    #        ))
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+
+    # Configurar el layout del gráfico con el fondo oscuro
+    fig.update_layout(
+        title=f'Top {TOP} Productos Más Vendidos',
+        xaxis_title='Mes',
+        yaxis_title='Cantidad de Ventas',
+        barmode='stack',  # Mantener las barras apiladas
+        margin=dict(l=40, r=40, t=40, b=40),
+        font=dict(color='#f8f9fa'),
+        plot_bgcolor='#343a40',  # Fondo del gráfico
+        paper_bgcolor='#343a40',  # Fondo de papel
+    )
+    
+    # Configurar el eje X
+    fig.update_xaxes(
+        tickvals=list(range(1, 13)),
+        ticktext=['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        title_font=dict(color='#f8f9fa'),
+        tickfont=dict(color='#f8f9fa')
+    )
+    
+    # Configurar el eje Y
+    fig.update_yaxes(
+        title_font=dict(color='#f8f9fa'),
+        tickfont=dict(color='#f8f9fa')
+    )
+    
+    # Configurar la leyenda
+    fig.update_layout(legend=dict(font=dict(color='#f8f9fa')))
+
+    # Mostrar el gráfico
+    PLOT = plot(fig, include_plotlyjs=True, output_type='div')
+    
+    return {
+        'plot': PLOT,
+        'top_productos': TOP_PRODUCTO
+    }
+
 
 
 def draw_plot(x, y, title,xlabel='Año', ylabel='Cantidad',add_trendline=True):
@@ -351,10 +678,13 @@ def draw_plot(x, y, title,xlabel='Año', ylabel='Cantidad',add_trendline=True):
     xlabel=xlabel.upper()
     ylabel=ylabel.upper()
     fig = go.Figure()
-    # Colores para las barras
-    bar_colors = [COLORS[i % len(COLORS)] for i in range(len(x))]
-    bar_colors = random.sample(COLORS, len(x))
-    
+   # Colores para las barras
+    if len(x) > len(COLORS):
+        # Si hay más barras que colores, repetir los colores
+        bar_colors = [COLORS[i % len(COLORS)] for i in range(len(x))]
+    else:
+        # Si hay suficientes colores, usar una muestra aleatoria
+        bar_colors = random.sample(COLORS, len(x))
     fig.add_trace(go.Bar(
         x=x,
         y=y,

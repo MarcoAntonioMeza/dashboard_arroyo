@@ -5,23 +5,30 @@ from django.shortcuts import render
 from process_data.process import *
 
 
-def indexk(request):
-    # Obtener la gráfica en formato base64
-    image_base64 = ventas_anio_totales()
-    
-    # Incrustar la imagen en la plantilla HTML
-    html = f'<img src="data:image/png;base64,{image_base64}" alt="Gráfica de Ventas">'
-    
-    return HttpResponse(html)
-
 
 
 def index(request):
     
+    #year = int(request.GET.get('year',date.today().year))
+
+    data = vetas_totales()    
+    return render(request, 'ventas/index.html',data)
+
+def ventas_mes(request):
+    
     year = int(request.GET.get('year',date.today().year))
 
-    data = vetas_totales()
-    #print(data)
+    data = ventas_mes_df(year)
+
+    return render(request, 'ventas/mes.html',data)
+
+
+
+def productos(request):
     
     
-    return render(request, 'ventas/index.html',data)
+
+    data = venta_detalle_producto()
+
+    return render(request, 'productos/index.html',data)
+    

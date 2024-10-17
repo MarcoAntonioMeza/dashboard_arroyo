@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<!-- Asegúrate de incluir el CDN de Font Awesome en tu archivo base o en el head de tu HTML -->
+<style>
+    .uppercase {
+        text-transform: uppercase;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12 text-center">
+            <h1 class="display-4">PESCADOS Y MARISCOS ARROYO</h1>
+            
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <!-- Gráfica General de Ventas -->
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-chart-line"></i> Gráfica de Ventas Mensuales de los Productos Más Vendidos por Año</h5>
+
+                    <div id="graph-container" class="mt-3">
+                        {{ plot|safe }} <!-- Aquí se inyecta la gráfica -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
