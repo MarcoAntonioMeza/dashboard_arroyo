@@ -6,25 +6,17 @@ from process_data.process import *
 
 
 def index(request):
-    
-    #year = int(request.GET.get('year',date.today().year))
-
     data = vetas_totales()    
     return render(request, 'ventas/index.html',data)
 
 def ventas_mes(request):
-    
     year = int(request.GET.get('year',date.today().year))
-
     data = ventas_mes_df(year)
-
     return render(request, 'ventas/mes.html',data)
 
 
 
 def productos(request):
     data = venta_detalle_producto()
-    print(data['top_productos'])
-
     return render(request, 'productos/index.html',data)
     

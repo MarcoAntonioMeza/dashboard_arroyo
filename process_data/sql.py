@@ -36,7 +36,7 @@ SELECT
     -- p.precio_menudeo,
      vd.cantidad,
     -- vd.precio_venta,
-    vd.created_by,
+    -- vd.created_by,
     -- u.nombre AS creado_por,
     p.tipo_medida,
     -- Ajuste de cantidad dependiendo del tipo de medida
@@ -49,7 +49,7 @@ SELECT
     -- pertenece.nombre AS pertenece,
     -- suc.id AS ruta_asignada_id,
     -- suc.nombre AS ruta_asignada,
-    vd.created_at,
+    -- vd.created_at,
     DATE(FROM_UNIXTIME(vd.created_at)) AS fecha,  -- Solo la fecha
     TIME(FROM_UNIXTIME(vd.created_at)) AS hora
 FROM
