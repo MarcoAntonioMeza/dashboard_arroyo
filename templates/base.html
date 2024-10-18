@@ -14,46 +14,47 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
         integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM9d9i3X2L+0G/oRaZPf/MG3PeD6G3S6/7Okh" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM9d9i3X2L+0G/oRaZPf/MG3PeD6G3S6/7Okh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM9d9i3X2L+0G/oRaZPf/MG3PeD6G3S6/7Okh" crossorigin="anonymous">
 
 
 
     <!-- Estilos personalizados -->
     <style>
         /* Estilo para el formulario y el select */
-.form-group label {
-    color: #f8f9fa;
-    /* Mantener el color del texto claro */
-}
+        .form-group label {
+            color: #f8f9fa;
+            /* Mantener el color del texto claro */
+        }
 
-.form-control {
-    background-color: #343a40;
-    /* Fondo oscuro para el select */
-    border: 1px solid #495057;
-    /* Borde oscuro */
-    color: #f8f9fa;
-    /* Texto claro */
-    border-radius: 8px;
-    /* Bordes redondeados */
-    padding: 0.5rem 1rem;
-    /* Espaciado interno */
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
+        .form-control {
+            background-color: #343a40;
+            /* Fondo oscuro para el select */
+            border: 1px solid #495057;
+            /* Borde oscuro */
+            color: #f8f9fa;
+            /* Texto claro */
+            border-radius: 8px;
+            /* Bordes redondeados */
+            padding: 0.5rem 1rem;
+            /* Espaciado interno */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
 
-.form-control:focus {
-    background-color: #495057;
-    /* Cambiar el fondo al hacer foco */
-    border-color: #007bff;
-    /* Borde azul cuando está enfocado */
-    outline: none;
-}
+        .form-control:focus {
+            background-color: #495057;
+            /* Cambiar el fondo al hacer foco */
+            border-color: #007bff;
+            /* Borde azul cuando está enfocado */
+            outline: none;
+        }
 
-.form-control:hover {
-    background-color: #3c4044;
-    /* Fondo ligeramente más claro al pasar el mouse */
-    border-color: #6c757d;
-    /* Borde más claro al pasar el mouse */
-}
+        .form-control:hover {
+            background-color: #3c4044;
+            /* Fondo ligeramente más claro al pasar el mouse */
+            border-color: #6c757d;
+            /* Borde más claro al pasar el mouse */
+        }
 
         .uppercase {
             text-transform: uppercase;
@@ -125,6 +126,33 @@
         .footer a:hover {
             text-decoration: underline;
         }
+
+        .custom-scroll-table {
+            max-height: 500px;
+            /* Altura máxima de la tabla */
+            overflow-y: auto;
+            /* Habilitar desplazamiento vertical */
+            display: block;
+            /* Hacer que la tabla se comporte como un bloque */
+        }
+
+        /* Para mantener el diseño de la tabla al ser scrollable */
+        .custom-scroll-table thead,
+        .custom-scroll-table tbody {
+            display: table;
+            /* Asegura que el thead y tbody se comporten como una tabla */
+            width: 100%;
+            /* Asegura que se mantenga el ancho completo */
+            table-layout: fixed;
+            /* Fija el ancho de las columnas */
+        }
+
+        .custom-scroll-table tbody {
+            height: 80px;
+            /* Ajusta la altura del tbody si es necesario */
+            overflow-y: auto;
+            /* Habilita el desplazamiento en el cuerpo de la tabla */
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -147,7 +175,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'producto_detalle' %}">VENTAS DE PRODUCTOS</a>
                     </li>
-                
+
                 </ul>
             </div>
         </div>

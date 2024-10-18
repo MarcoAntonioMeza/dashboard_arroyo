@@ -25,19 +25,19 @@ ON
 VENTA_DETALLE = """
 SELECT
     vd.id,
-    c.nombre AS cliente,
-    c.id AS cliente_id,
-    vd.venta_id,
-    vd.producto_id,
+    -- c.nombre AS cliente,
+    -- c.id AS cliente_id,
+    -- vd.venta_id,
+    -- vd.producto_id,
     p.nombre AS producto,
     p.costo,
-    p.precio_publico,
-    p.precio_mayoreo,
-    p.precio_menudeo,
-    vd.cantidad,
-    vd.precio_venta,
+    -- p.precio_publico,
+    -- p.precio_mayoreo,
+    -- p.precio_menudeo,
+     vd.cantidad,
+    -- vd.precio_venta,
     vd.created_by,
-    u.nombre AS creado_por,
+    -- u.nombre AS creado_por,
     p.tipo_medida,
     -- Ajuste de cantidad dependiendo del tipo de medida
     CASE
@@ -45,10 +45,10 @@ SELECT
         WHEN p.tipo_medida = 10 THEN 'Piezas'
         ELSE '--'
     END AS unidad_medida,
-    pertenece.id AS pertenece_id,
-    pertenece.nombre AS pertenece,
-    suc.id AS ruta_asignada_id,
-    suc.nombre AS ruta_asignada,
+   --  pertenece.id AS pertenece_id,
+    -- pertenece.nombre AS pertenece,
+    -- suc.id AS ruta_asignada_id,
+    -- suc.nombre AS ruta_asignada,
     vd.created_at,
     DATE(FROM_UNIXTIME(vd.created_at)) AS fecha,  -- Solo la fecha
     TIME(FROM_UNIXTIME(vd.created_at)) AS hora

@@ -25,10 +25,8 @@ def ventas_mes(request):
 
 
 def productos(request):
-    
-    
-
     data = venta_detalle_producto()
+    print(data['top_productos'])
 
     return render(request, 'productos/index.html',data)
     
