@@ -1,7 +1,5 @@
 from datetime import date
-from django.http import HttpResponse
 from django.shortcuts import render
-
 from process_data.process import *
 
 

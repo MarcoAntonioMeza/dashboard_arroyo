@@ -2868,7 +2868,7 @@ def venta_detalle_producto():
     productos_mas_vendidos = df_vD.groupby('producto')['cantidad'].sum().sort_values(ascending=False)
     TOP_PRODUCTO = productos_mas_vendidos.head(TOP).index.tolist()
     df_top = df_vD[df_vD['producto'].isin(TOP_PRODUCTO)]
-    print(df_top)
+    #print(df_top)
 
     # Agrupar por año, mes y producto para calcular las ventas
     ventas_por_mes_producto = df_top.groupby(['año', 'mes', 'producto'])['cantidad'].sum().unstack(fill_value=0)

@@ -90,27 +90,27 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #        'NAME': BASE_DIR / 'db.sqlite3',
 #    }
 #}
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wwlerc_arroyo_data',
-        'USER': 'wwlerc_arroyo_data',
-        'PASSWORD': '$,.s(4MHPym%',
-        'HOST': '162.214.146.177',  # Por ejemplo, '123.45.67.89' o 'mysql.ejemplo.com'
-        'PORT': '3306',  # Este es el puerto por defecto de MySQL. Cámbialo si tu servidor usa otro.
-    }
-}
-
 #DATABASES = {
 #    'default': {
 #        'ENGINE': 'django.db.backends.mysql',
 #        'NAME': 'wwlerc_arroyo_data',
-#        'USER': 'root',
-#        'PASSWORD': '',
-#        'HOST': 'localhost',  # Por ejemplo, '123.45.67.89' o 'mysql.ejemplo.com'
+#        'USER': 'wwlerc_arroyo_data',
+#        'PASSWORD': '$,.s(4MHPym%',
+#        'HOST': '162.214.146.177',  # Por ejemplo, '123.45.67.89' o 'mysql.ejemplo.com'
 #        'PORT': '3306',  # Este es el puerto por defecto de MySQL. Cámbialo si tu servidor usa otro.
 #    }
 #}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'wwlerc_arroyo_data',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',  # Por ejemplo, '123.45.67.89' o 'mysql.ejemplo.com'
+        'PORT': '3306',  # Este es el puerto por defecto de MySQL. Cámbialo si tu servidor usa otro.
+    }
+}
 
 
 # Password validation
