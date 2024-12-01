@@ -27,9 +27,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-hm&g)nkbs7&)f(eozf@8v-2apt69kl&a4di8b+yuqp&i)35o66'
 
-DEBUG = 'RENDER' not in os.environ
+DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['arroyo-dashl.lerco.agency', 'lerco.agency']
+
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:    
@@ -100,17 +101,27 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #        'PORT': '3306',  # Este es el puerto por defecto de MySQL. Cámbialo si tu servidor usa otro.
 #    }
 #}
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wwlerc_arroyo_data',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',  # Por ejemplo, '123.45.67.89' o 'mysql.ejemplo.com'
+        'NAME': 'pescadosymarisco_erp',
+        'USER': 'pescadosymarisco_dash',
+        'PASSWORD': 'LS:dash*123',
+        'HOST': '162.240.78.82',  # Por ejemplo, '123.45.67.89' o 'mysql.ejemplo.com'
         'PORT': '3306',  # Este es el puerto por defecto de MySQL. Cámbialo si tu servidor usa otro.
     }
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'wwlerc_arroyo_data',
+#        'USER': 'root',
+#        'PASSWORD': '',
+#        'HOST': 'localhost',  # Por ejemplo, '123.45.67.89' o 'mysql.ejemplo.com'
+#        'PORT': '3306',  # Este es el puerto por defecto de MySQL. Cámbialo si tu servidor usa otro.
+#    }
+#}
 
 
 # Password validation
@@ -148,7 +159,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_URL = 'static/'
+//STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
